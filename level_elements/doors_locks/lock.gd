@@ -106,7 +106,8 @@ func draw_base() -> void:
 		Enums.Colors.Stone:
 			RenderingServer.canvas_item_add_texture_rect(base, rect, BASE_STONE, true)
 		Enums.Colors.None:
-			pass
+			RenderingServer.canvas_item_add_nine_patch(base, rect, Rect2(0, 0, 11, 11), NONE_NPATCH, Vector2(5, 5), Vector2(5, 5), 1, 1)
+			RenderingServer.canvas_item_add_texture_rect_region(base, Rect2(rect.position.x+rect.size.x/2-4.5, rect.position.y+rect.size.y/2-4.5, 11, 11), NONE_NPATCH, Rect2(11, 0, 11, 11))
 		Enums.Colors.Gate:
 			var rect2 = rect
 			rect2.size /= 2
@@ -196,6 +197,8 @@ const FRAME_POS := preload("res://level_elements/doors_locks/textures/lock_frame
 const FRAME_NEG := preload("res://level_elements/doors_locks/textures/lock_frame_texture_neg.png")
 const FRAME_RECT := Rect2(0, 0, 5, 5)
 const FRAME_COORD := Vector2(2, 2)
+
+const NONE_NPATCH := preload("res://level_elements/doors_locks/textures/none_ninepatch.png")
 
 func _create_canvas_items() -> void:
 	base = RenderingServer.canvas_item_create()

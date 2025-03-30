@@ -46,6 +46,7 @@ const SALVAGE_POINT := preload("res://level_elements/salvage_points/salvage_poin
 const PLAYER := preload("res://level_elements/kid/kid.tscn")
 const GOAL := preload("res://level_elements/goal/goal.tscn")
 
+@onready var bg: ColorRect = %Background
 @onready var logic: LevelLogic = %LevelLogic
 @onready var doors: Node2D = %Doors
 @onready var keys: Node2D = %Keys
@@ -184,6 +185,13 @@ func reset() -> void:
 	assert(PerfManager.start("Level::reset (regen collision system)"))
 	elem_to_collision_system_id.clear()
 	collision_system = level_data.get_collision_system()
+	bg.color = level_data.bgcolor
+	bg.size = level_data.size
+	if level_data.world_clear == 0:
+		ui.clear_amt.hide()
+	else:
+		ui.clear_amt.show()
+		ui.clear_amt.text = "Cleared: "+str(_entries_completed())+"/"+str(level_data.world_clear)
 	for id in collision_system.get_rects():
 		var elem = collision_system.get_rect_data(id)
 		elem_to_collision_system_id[elem] = id
@@ -572,6 +580,18 @@ func _place_goal(coord: Vector2i) -> int:
 	if id == -1:
 		id = elem_to_collision_system_id[Enums.LevelElementTypes.Goal]
 	return id
+
+## Returns the amount of entries in this level that have been either cleared or starred.
+func _entries_completed() -> int:
+	var completed = 0
+	for entry in entries.get_children():
+		if entry.completion.visible and gameplay_manager.pack_data.levels[entry.data.leads_to].world_clear == 0:
+			completed += 1
+	return completed
+
+### Returns True if all entries in the level have been cleared or starred.
+#func _world_starred() -> bool:
+#	return _entries_completed() >= entries.get_children().size()
 
 ## Returns the node associated by the given id. Mostly used for testing.
 func get_node_by_id(id: int) -> Node:

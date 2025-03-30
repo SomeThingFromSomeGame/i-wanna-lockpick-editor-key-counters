@@ -45,6 +45,10 @@ var placing := Enums.LevelElementTypes.Goal
 @onready var width: SpinBox = %Width
 @onready var height: SpinBox = %Height
 
+@onready var world_clear: SpinBox = %ClearNeed
+@onready var bgcolor: ColorPickerButton = %Color
+@onready var reward_color: ColorChoiceEditor = %ColorChoice
+
 @onready var player_spawn_coord: Label = %PlayerSpawnCoord
 @onready var goal_coord: Label = %GoalCoord
 
@@ -87,6 +91,8 @@ func _ready() -> void:
 		if visible:
 			_set_to_level_pack_data()
 	)
+	reward_color.set_to_color(Enums.Colors.None)
+	reward_color.changed_color.connect(_on_set_color)
 	what_to_place.object_selected.connect(_on_what_to_place_changed)
 	level_name.text_changed.connect(_on_set_name)
 	level_title.text_changed.connect(_on_set_title)
@@ -96,6 +102,9 @@ func _ready() -> void:
 	width.value_changed.connect(_on_size_changed.unbind(1))
 	height.value_changed.connect(_on_size_changed.unbind(1))
 	remove_goal.pressed.connect(_on_remove_goal_button_pressed)
+	
+	world_clear.value_changed.connect(_on_set_clear_amount)
+	bgcolor.color_changed.connect(_on_set_bg)
 	
 	exitable.pressed.connect(_on_changed_exitable)
 	
@@ -162,6 +171,12 @@ func _set_to_level_data() -> void:
 	if level_comment.text != _level_data.comment:
 		level_comment.text = _level_data.comment
 	exitable.button_pressed = _level_data.exitable
+	if bgcolor.color != _level_data.bgcolor:
+		bgcolor.color = _level_data.bgcolor
+	if world_clear.value != _level_data.world_clear:
+		world_clear.value = _level_data.world_clear
+	if reward_color.color != _level_data.reward:
+		reward_color.set_to_color(_level_data.reward)
 	_setting_to_data = false
 
 func _set_to_level_pack_data() -> void:
@@ -188,6 +203,19 @@ func _on_set_title(new_title: String) -> void:
 	if _setting_to_data: return
 	if _level_data.title == new_title: return
 	_level_data.title = new_title
+
+func _on_set_bg(new_color: Color) -> void:
+	if _setting_to_data: return
+	if _level_data.bgcolor == new_color: return
+	_level_data.bgcolor = new_color
+func _on_set_clear_amount(new_clear: int) -> void:
+	if _setting_to_data: return
+	if _level_data.world_clear == new_clear: return
+	_level_data.world_clear = new_clear
+func _on_set_color(new_color: Enums.Colors) -> void:
+	if _setting_to_data: return
+	if _level_data.reward == new_color: return
+	_level_data.reward = new_color
 
 func _on_set_author(new_author: String) -> void:
 	if _setting_to_data: return
