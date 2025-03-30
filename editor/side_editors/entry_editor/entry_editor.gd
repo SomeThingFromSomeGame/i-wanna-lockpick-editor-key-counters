@@ -18,6 +18,7 @@ var editor_data: EditorData:
 		entry.data = data
 		_set_to_data()
 @onready var entry: Entry = %Entry
+@onready var skin: SpinBox = %Skin
 @onready var level_name: Label = %LevelName
 @onready var level_list: LevelList = %LevelList
 
@@ -28,6 +29,7 @@ func _set_to_data() -> void:
 func _ready() -> void:
 	visibility_changed.connect(_general_update)
 	level_list.selected_level.connect(_update_leads_to)
+	skin.value_changed.connect(_update_skin)
 
 func _general_update() -> void:
 	if not visible: return
@@ -36,6 +38,11 @@ func _general_update() -> void:
 
 func _update_leads_to(id: int) -> void:
 	data.leads_to = id
+	_update_level_name()
+
+func _update_skin(id: int) -> void:
+	data.skin = id
+	print(data.skin)
 	_update_level_name()
 
 func _update_level_name() -> void:

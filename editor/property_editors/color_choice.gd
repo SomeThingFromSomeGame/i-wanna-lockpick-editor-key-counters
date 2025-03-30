@@ -10,6 +10,7 @@ const LOCK := preload("res://level_elements/doors_locks/lock.tscn")
 @export var lock_size := 14
 
 @export var support_gates := false
+@export var support_none := false
 
 ## the separation in pixels between locks
 var lock_sep := 10
@@ -51,7 +52,7 @@ var is_ready := false
 func _ready():
 	is_ready = true
 	for a_color in Enums.Colors.values():
-		if a_color == Enums.Colors.None: continue
+		if a_color == Enums.Colors.None and !support_none: continue
 		if a_color == Enums.Colors.Gate and !support_gates: continue
 		var l := LOCK.instantiate()
 		var ld := LockData.new()

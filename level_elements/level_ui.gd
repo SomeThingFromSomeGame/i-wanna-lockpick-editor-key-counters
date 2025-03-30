@@ -7,6 +7,7 @@ class_name LevelUI
 @onready var autorun_sound: AudioStreamPlayer = %Autorun
 @onready var autorun_off: Sprite2D = %AutorunOff
 @onready var autorun_on: Sprite2D = %AutorunOn
+@onready var clear_amt: Label = $ClearAmount
 @onready var darken_background: ColorRect = %DarkenBackground
 var currently_shown: CanvasItem:
 	set(val):

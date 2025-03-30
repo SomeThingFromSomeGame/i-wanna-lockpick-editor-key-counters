@@ -89,6 +89,7 @@ func _physics_process(_delta: float) -> void:
 func reset() -> void:
 	for color in key_counts.keys():
 		key_counts[color].set_to(0, 0)
+	get_world_rewards()
 	for color in star_keys.keys():
 		star_keys[color] = false
 	glitch_color = Enums.Colors.Glitch
@@ -107,6 +108,30 @@ func reset() -> void:
 	
 	update_gates()
 	update_master_equipped(false, false, true)
+
+func get_world_rewards() -> void:
+	var gameplay_manager = null
+	# if there is a way to get the id of a level then that would sure be helpful
+	if level:
+		gameplay_manager = level.gameplay_manager
+	for checklvl in range(0, gameplay_manager.pack_data.levels.size()):
+		if gameplay_manager.pack_data.levels[checklvl].reward == Enums.Colors.None or gameplay_manager.pack_data.levels[checklvl].reward == null: continue
+		var color = Enums.Colors.None
+		if gameplay_manager.pack_data.levels[checklvl].world_clear == 0:
+			if gameplay_manager.pack_state.completed_levels.has(checklvl):
+				color = gameplay_manager.pack_data.levels[checklvl].reward
+		else:
+			var cleared_entries = 0
+			var total_entries = 0
+			for entry_data in gameplay_manager.pack_data.levels[checklvl].entries:
+				if gameplay_manager.pack_data.levels[entry_data.leads_to].world_clear == 0:
+					total_entries += 1
+					if gameplay_manager.pack_state.completed_levels.has(entry_data.leads_to):
+						cleared_entries += 1
+			if cleared_entries >= gameplay_manager.pack_data.levels[checklvl].world_clear:
+				color = gameplay_manager.pack_data.levels[checklvl].reward
+		if color == Enums.Colors.None: continue
+		key_counts[color].add(ComplexNumber.new_with(1,0))
 
 # TODO: the way undos would work here would make each individual affected door take up an action! oh no! either merge them or apply them all at once.
 func apply_auras_on_door(door: Door) -> void:

@@ -20,6 +20,17 @@ class_name LevelData
 ## Whether you can exit this level.
 @export var exitable := true
 
+## The key color you get 1 of every level/world after clearing this world/level.
+@export var reward := Enums.Colors.None
+
+## Amount of levels required to be cleared within the world to count the world as cleared.
+## Will not be as a world if set to 0.
+@export var world_clear := 0:
+	set(val):
+		if world_clear == val: return
+		world_clear = val
+		changed.emit()
+
 const SMALLEST_SIZE := Vector2i(800, 608)
 signal changed_size
 @export var size := SMALLEST_SIZE:
@@ -86,6 +97,12 @@ var has_goal := true:
 		comment = val
 		changed.emit()
 
+@export var bgcolor := Color("4d4d4d"):
+	set(val):
+		if bgcolor == val: return
+		bgcolor = val
+		changed.emit()
+
 func _init() -> void:
 	changed_player_spawn_position.connect(emit_changed)
 	changed_goal_position.connect(emit_changed)
@@ -98,6 +115,8 @@ func duplicated() -> LevelData:
 	dupe.tiles = tiles.duplicate(true)
 	dupe.name = name
 	dupe.title = title
+	dupe.world_clear = world_clear
+	dupe.bgcolor = bgcolor
 	for door in doors:
 		dupe.doors.push_back(door.duplicated())
 	for key in keys:
@@ -257,6 +276,8 @@ func check_valid(should_correct: bool) -> void:
 		salvage_point.check_valid(self, should_correct)
 	for counter in keycounters:
 		counter.check_valid(self, should_correct)
+	for entry in entries:
+		entry.check_valid(self, should_correct)
 
 func get_screenshot() -> Image:
 	var viewport := SubViewport.new()
